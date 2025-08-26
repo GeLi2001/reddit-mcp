@@ -58,7 +58,7 @@ def main():
         # Test 4: Check Reddit API limits/status
         print(f"\n📈 Reddit API Status:")
         print(f"   Read-only mode: {reddit.read_only}")
-        print(f"   Auth: {reddit._core._authorized}")
+        # print(f"   Auth: {reddit._core._authorized}")  # This property doesn't exist in PRAW 7.x
         
     except Exception as e:
         print(f"❌ Critical error: {e}")

@@ -1,8 +1,10 @@
 """Tests for reddit_mcp.config module."""
 
 import os
-import pytest
 from unittest.mock import patch
+
+import pytest
+
 from reddit_mcp.config import RedditConfig
 
 
@@ -19,14 +21,16 @@ def test_config_from_env_success():
         assert config.user_agent == 'test_user_agent'
 
 
-def test_config_from_env_missing_required():
+@patch('reddit_mcp.config.load_dotenv')  # Mock dotenv loading
+def test_config_from_env_missing_required(mock_load_dotenv):
     """Test configuration loading fails with missing required vars."""
     with patch.dict(os.environ, {}, clear=True):
         with pytest.raises(ValueError, match="Missing required Reddit API configuration"):
             RedditConfig.from_env()
 
 
-def test_config_from_env_partial_missing():
+@patch('reddit_mcp.config.load_dotenv')  # Mock dotenv loading
+def test_config_from_env_partial_missing(mock_load_dotenv):
     """Test configuration loading fails with partially missing vars."""
     with patch.dict(os.environ, {
         'REDDIT_CLIENT_ID': 'test_client_id',
