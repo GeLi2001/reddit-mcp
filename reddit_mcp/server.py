@@ -1,13 +1,12 @@
-"""Reddit MCP Server implementation."""
+"""Reddit MCP Server implementation with proper MCP SDK patterns."""
 
 import json
 import logging
 from typing import Any, Dict, List, Optional, Sequence
 
-from mcp.server import Server
+from mcp.server import NotificationOptions, Server
 from mcp.server.models import InitializationOptions
-from mcp.types import (CallToolRequest, CallToolResult, ListToolsRequest,
-                       ListToolsResult, TextContent, Tool)
+from mcp.types import CallToolResult, TextContent, Tool
 
 from .config import RedditConfig
 from .reddit_client import RedditClient
@@ -23,10 +22,9 @@ server = Server("reddit-mcp-tool")
 reddit_client: Optional[RedditClient] = None
 
 
-@server.list_tools()
-async def list_tools() -> ListToolsResult:
-    """List available Reddit MCP tools."""
-    tools = [
+def get_available_tools() -> List[Tool]:
+    """Get the list of available Reddit tools."""
+    return [
         Tool(
             name="search_reddit_posts",
             description="Search for posts in a specific subreddit",
@@ -78,8 +76,6 @@ async def list_tools() -> ListToolsResult:
                 "required": ["post_id"]
             }
         ),
-
-
         Tool(
             name="get_subreddit_info",
             description="Get information about a subreddit",
@@ -114,16 +110,56 @@ async def list_tools() -> ListToolsResult:
                 },
                 "required": ["subreddit"]
             }
+        ),
+        Tool(
+            name="search_reddit_all",
+            description="Search for posts across all of Reddit (site-wide search)",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "The search query to search across all Reddit"
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "description": "Number of posts to return (default: 10, max: 100)",
+                        "default": 10,
+                        "minimum": 1,
+                        "maximum": 100
+                    },
+                    "sort": {
+                        "type": "string",
+                        "description": "Sort method for search results",
+                        "enum": ["relevance", "hot", "top", "new", "comments"],
+                        "default": "relevance"
+                    },
+                    "time_filter": {
+                        "type": "string",
+                        "description": "Time filter for search results",
+                        "enum": ["all", "day", "week", "month", "year"],
+                        "default": "all"
+                    }
+                },
+                "required": ["query"]
+            }
         )
     ]
-    
-    return ListToolsResult(tools=tools)
+
+
+@server.list_tools()
+async def handle_list_tools() -> List[Tool]:
+    """Handle tools list request."""
+    return get_available_tools()
 
 
 @server.call_tool()
-async def call_tool(name: str, arguments: dict[str, Any] | None) -> CallToolResult:
-    """Handle tool calls."""
+async def handle_call_tool(name: str, arguments: Dict[str, Any] | None) -> CallToolResult:
+    """Handle tool call requests."""
     global reddit_client
+    
+    # Safety guard
+    arguments = arguments or {}
     
     if reddit_client is None:
         return CallToolResult(
@@ -175,10 +211,6 @@ async def call_tool(name: str, arguments: dict[str, Any] | None) -> CallToolResu
                 ]
             )
         
-
-        
-
-        
         elif name == "get_subreddit_info":
             subreddit = arguments.get("subreddit")
             subreddit_info = reddit_client.get_subreddit_info(subreddit)
@@ -204,6 +236,29 @@ async def call_tool(name: str, arguments: dict[str, Any] | None) -> CallToolResu
                     TextContent(
                         type="text",
                         text=f"Hot posts from r/{subreddit}:\n\n" +
+                             json.dumps(posts, indent=2, default=str)
+                    )
+                ]
+            )
+        
+        elif name == "search_reddit_all":
+            query = arguments.get("query")
+            limit = arguments.get("limit", 10)
+            sort = arguments.get("sort", "relevance")
+            time_filter = arguments.get("time_filter", "all")
+            
+            posts = reddit_client.search_all_reddit(
+                query=query,
+                limit=limit,
+                sort=sort,
+                time_filter=time_filter
+            )
+            
+            return CallToolResult(
+                content=[
+                    TextContent(
+                        type="text",
+                        text=f"Found {len(posts)} posts across all Reddit for query: '{query}'\n\n" +
                              json.dumps(posts, indent=2, default=str)
                     )
                 ]
@@ -259,10 +314,10 @@ async def main():
             write_stream,
             InitializationOptions(
                 server_name="reddit-mcp-tool",
-                server_version="0.1.0",
+                server_version="0.1.4",
                 capabilities=server.get_capabilities(
-                    notification_options=server.create_notification_options(),
-                    experimental_capabilities=None,
+                    notification_options=NotificationOptions(),
+                    experimental_capabilities={},
                 ),
             ),
         )

@@ -144,3 +144,46 @@ class RedditClient:
             
         except Exception as e:
             raise Exception(f"Error getting hot posts from r/{subreddit_name}: {str(e)}")
+    
+    def search_all_reddit(
+        self, 
+        query: str, 
+        limit: int = 10,
+        sort: str = "relevance",
+        time_filter: str = "all"
+    ) -> List[Dict[str, Any]]:
+        """Search for posts across all of Reddit (site-wide search)."""
+        try:
+            # Search all of reddit using the 'all' subreddit
+            all_subreddit = self.reddit.subreddit("all")
+            
+            posts = []
+            search_results = all_subreddit.search(
+                query, 
+                limit=limit, 
+                sort=sort, 
+                time_filter=time_filter
+            )
+            
+            for submission in search_results:
+                post_data = {
+                    "id": submission.id,
+                    "title": submission.title,
+                    "author": str(submission.author) if submission.author else "[deleted]",
+                    "score": submission.score,
+                    "upvote_ratio": submission.upvote_ratio,
+                    "url": submission.url,
+                    "permalink": f"https://reddit.com{submission.permalink}",
+                    "created_utc": submission.created_utc,
+                    "num_comments": submission.num_comments,
+                    "selftext": submission.selftext[:500] + "..." if len(submission.selftext) > 500 else submission.selftext,
+                    "is_self": submission.is_self,
+                    "domain": submission.domain,
+                    "subreddit": str(submission.subreddit),
+                }
+                posts.append(post_data)
+            
+            return posts
+            
+        except Exception as e:
+            raise Exception(f"Error searching all Reddit for query '{query}': {str(e)}")
