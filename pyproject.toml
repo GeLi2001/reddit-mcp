@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "reddit-mcp-tool"
- version = "0.1.8"
+ version = "0.1.9"
 description = "Reddit MCP server for reading and searching Reddit content"
 readme = "README.md"
 license = {text = "MIT"}
