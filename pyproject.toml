@@ -6,6 +6,20 @@ build-backend = "hatchling.build"
 name = "reddit-mcp-tool"
 version = "0.1.0"
 description = "Reddit MCP server for reading and searching Reddit content"
+readme = "README.md"
+license = {text = "MIT"}
+keywords = ["reddit", "mcp", "model-context-protocol", "api", "search"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+]
 authors = [
     {name = "Your Name", email = "your.email@example.com"},
 ]
