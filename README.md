@@ -1,6 +1,6 @@
 # Reddit MCP Tool
 
-A Model Context Protocol (MCP) server that provides read-only tools for browsing and searching Reddit content through Reddit's official API. This server allows you to search for posts, read post details, and get subreddit information through MCP-compatible clients.
+A Model Context Protocol (MCP) server that provides read-only tools for browsing and searching Reddit content through Reddit's official API. Built with **FastMCP** for seamless integration and automatic serialization. This server allows you to search for posts, read post details, and get subreddit information through MCP-compatible clients.
 
 ## Features
 
@@ -9,6 +9,7 @@ A Model Context Protocol (MCP) server that provides read-only tools for browsing
 - 📊 **Get Subreddit Info**: Retrieve detailed information about subreddits
 - 🔥 **Get Hot Posts**: Fetch hot posts from subreddits
 - 📋 **Get Post Details**: Get comprehensive details about specific posts
+- ⚡ **FastMCP Integration**: Built with FastMCP for automatic serialization and seamless MCP compatibility
 
 ## Prerequisites
 
@@ -59,7 +60,7 @@ A Model Context Protocol (MCP) server that provides read-only tools for browsing
    ```env
    REDDIT_CLIENT_ID=your_client_id_here
    REDDIT_CLIENT_SECRET=your_client_secret_here
-   REDDIT_USER_AGENT=reddit-mcp-tool:v0.1.7 (by /u/yourusername)
+   REDDIT_USER_AGENT=reddit-mcp-tool:v0.2.0 (by /u/yourusername)
    ```
 
    **Note**: This server operates in read-only mode and only requires the client ID, secret, and user agent for basic API access.
@@ -217,7 +218,7 @@ Add this to your Claude Desktop configuration:
       "env": {
         "REDDIT_CLIENT_ID": "your_client_id_here",
         "REDDIT_CLIENT_SECRET": "your_client_secret_here",
-        "REDDIT_USER_AGENT": "reddit-mcp-tool:v0.1.7 (by /u/yourusername)"
+        "REDDIT_USER_AGENT": "reddit-mcp-tool:v0.2.0 (by /u/yourusername)"
       }
     }
   }
@@ -238,7 +239,7 @@ For local development, use:
       "env": {
         "REDDIT_CLIENT_ID": "your_client_id_here",
         "REDDIT_CLIENT_SECRET": "your_client_secret_here",
-        "REDDIT_USER_AGENT": "reddit-mcp-tool:v0.1.7 (by /u/yourusername)"
+        "REDDIT_USER_AGENT": "reddit-mcp-tool:v0.2.0 (by /u/yourusername)"
       }
     }
   }
