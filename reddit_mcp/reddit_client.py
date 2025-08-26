@@ -2,7 +2,7 @@
 
 from typing import Any, Dict, List
 
-import praw
+import asyncpraw
 
 from .config import RedditConfig
 
@@ -13,15 +13,20 @@ class RedditClient:
     def __init__(self, config: RedditConfig):
         """Initialize Reddit client with read-only configuration."""
         self.config = config
-        
-        # Initialize PRAW Reddit instance for read-only access
-        self.reddit = praw.Reddit(
-            client_id=config.client_id,
-            client_secret=config.client_secret,
-            user_agent=config.user_agent,
-        )
+        self._reddit = None
     
-    def search_posts(
+    @property
+    def reddit(self):
+        """Lazy initialize AsyncPRAW Reddit instance."""
+        if self._reddit is None:
+            self._reddit = asyncpraw.Reddit(
+                client_id=self.config.client_id,
+                client_secret=self.config.client_secret,
+                user_agent=self.config.user_agent,
+            )
+        return self._reddit
+    
+    async def search_posts(
         self, 
         subreddit_name: str, 
         query: str, 
@@ -31,7 +36,7 @@ class RedditClient:
     ) -> List[Dict[str, Any]]:
         """Search for posts in a subreddit."""
         try:
-            subreddit = self.reddit.subreddit(subreddit_name)
+            subreddit = await self.reddit.subreddit(subreddit_name)
             
             # Search posts
             posts = []
@@ -42,7 +47,7 @@ class RedditClient:
                 time_filter=time_filter
             )
             
-            for submission in search_results:
+            async for submission in search_results:
                 post_data = {
                     "id": submission.id,
                     "title": submission.title,
@@ -65,10 +70,10 @@ class RedditClient:
         except Exception as e:
             raise Exception(f"Error searching posts in r/{subreddit_name}: {str(e)}")
     
-    def get_post_details(self, post_id: str) -> Dict[str, Any]:
+    async def get_post_details(self, post_id: str) -> Dict[str, Any]:
         """Get detailed information about a specific post."""
         try:
-            submission = self.reddit.submission(id=post_id)
+            submission = await self.reddit.submission(id=post_id)
             
             return {
                 "id": submission.id,
@@ -96,10 +101,10 @@ class RedditClient:
     
 
     
-    def get_subreddit_info(self, subreddit_name: str) -> Dict[str, Any]:
+    async def get_subreddit_info(self, subreddit_name: str) -> Dict[str, Any]:
         """Get information about a subreddit."""
         try:
-            subreddit = self.reddit.subreddit(subreddit_name)
+            subreddit = await self.reddit.subreddit(subreddit_name)
             
             return {
                 "name": subreddit.display_name,
@@ -116,13 +121,13 @@ class RedditClient:
         except Exception as e:
             raise Exception(f"Error getting subreddit info for r/{subreddit_name}: {str(e)}")
     
-    def get_hot_posts(self, subreddit_name: str, limit: int = 10) -> List[Dict[str, Any]]:
+    async def get_hot_posts(self, subreddit_name: str, limit: int = 10) -> List[Dict[str, Any]]:
         """Get hot posts from a subreddit."""
         try:
-            subreddit = self.reddit.subreddit(subreddit_name)
+            subreddit = await self.reddit.subreddit(subreddit_name)
             
             posts = []
-            for submission in subreddit.hot(limit=limit):
+            async for submission in subreddit.hot(limit=limit):
                 post_data = {
                     "id": submission.id,
                     "title": submission.title,
@@ -145,7 +150,7 @@ class RedditClient:
         except Exception as e:
             raise Exception(f"Error getting hot posts from r/{subreddit_name}: {str(e)}")
     
-    def search_all_reddit(
+    async def search_all_reddit(
         self, 
         query: str, 
         limit: int = 10,
@@ -155,7 +160,7 @@ class RedditClient:
         """Search for posts across all of Reddit (site-wide search)."""
         try:
             # Search all of reddit using the 'all' subreddit
-            all_subreddit = self.reddit.subreddit("all")
+            all_subreddit = await self.reddit.subreddit("all")
             
             posts = []
             search_results = all_subreddit.search(
@@ -165,7 +170,7 @@ class RedditClient:
                 time_filter=time_filter
             )
             
-            for submission in search_results:
+            async for submission in search_results:
                 post_data = {
                     "id": submission.id,
                     "title": submission.title,

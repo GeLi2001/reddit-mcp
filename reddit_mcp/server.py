@@ -179,7 +179,7 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any] | None) -> CallT
             sort = arguments.get("sort", "relevance")
             time_filter = arguments.get("time_filter", "all")
             
-            posts = reddit_client.search_posts(
+            posts = await reddit_client.search_posts(
                 subreddit_name=subreddit,
                 query=query,
                 limit=limit,
@@ -199,7 +199,7 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any] | None) -> CallT
         
         elif name == "get_reddit_post_details":
             post_id = arguments.get("post_id")
-            post_details = reddit_client.get_post_details(post_id)
+            post_details = await reddit_client.get_post_details(post_id)
             
             return CallToolResult(
                 content=[
@@ -213,7 +213,7 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any] | None) -> CallT
         
         elif name == "get_subreddit_info":
             subreddit = arguments.get("subreddit")
-            subreddit_info = reddit_client.get_subreddit_info(subreddit)
+            subreddit_info = await reddit_client.get_subreddit_info(subreddit)
             
             return CallToolResult(
                 content=[
@@ -229,7 +229,7 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any] | None) -> CallT
             subreddit = arguments.get("subreddit")
             limit = arguments.get("limit", 10)
             
-            posts = reddit_client.get_hot_posts(subreddit, limit)
+            posts = await reddit_client.get_hot_posts(subreddit, limit)
             
             return CallToolResult(
                 content=[
@@ -247,7 +247,7 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any] | None) -> CallT
             sort = arguments.get("sort", "relevance")
             time_filter = arguments.get("time_filter", "all")
             
-            posts = reddit_client.search_all_reddit(
+            posts = await reddit_client.search_all_reddit(
                 query=query,
                 limit=limit,
                 sort=sort,
@@ -314,7 +314,7 @@ async def main():
             write_stream,
             InitializationOptions(
                 server_name="reddit-mcp-tool",
-                server_version="0.1.7",
+                server_version="0.1.8",
                 capabilities=server.get_capabilities(
                     notification_options=NotificationOptions(),
                     experimental_capabilities={},
