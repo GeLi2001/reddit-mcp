@@ -5,6 +5,7 @@ A Model Context Protocol (MCP) server that provides read-only tools for browsing
 ## Features
 
 - 🔍 **Search Posts**: Search for posts in specific subreddits with various sorting and filtering options
+- 🌐 **Site-wide Search**: Search across all of Reddit with keyword queries
 - 📊 **Get Subreddit Info**: Retrieve detailed information about subreddits
 - 🔥 **Get Hot Posts**: Fetch hot posts from subreddits
 - 📋 **Get Post Details**: Get comprehensive details about specific posts
@@ -58,7 +59,7 @@ A Model Context Protocol (MCP) server that provides read-only tools for browsing
    ```env
    REDDIT_CLIENT_ID=your_client_id_here
    REDDIT_CLIENT_SECRET=your_client_secret_here
-   REDDIT_USER_AGENT=reddit-mcp-tool:v0.1.0 (by /u/yourusername)
+   REDDIT_USER_AGENT=reddit-mcp-tool:v0.1.7 (by /u/yourusername)
    ```
 
    **Note**: This server operates in read-only mode and only requires the client ID, secret, and user agent for basic API access.
@@ -79,7 +80,7 @@ uv run python -m reddit_mcp.server
 
 ### Available Tools
 
-#### 1. Search Reddit Posts
+#### 1. Search Reddit Posts (Subreddit-specific)
 
 Search for posts in a specific subreddit:
 
@@ -96,7 +97,38 @@ Search for posts in a specific subreddit:
 }
 ```
 
-#### 2. Get Post Details
+**Parameters:**
+
+- `subreddit` (required): The subreddit name (without r/)
+- `query` (required): Search query string
+- `limit` (optional): Number of posts to return (1-100, default: 10)
+- `sort` (optional): Sort method - "relevance", "hot", "top", "new", "comments" (default: "relevance")
+- `time_filter` (optional): Time filter - "all", "day", "week", "month", "year" (default: "all")
+
+#### 2. Search All Reddit (Site-wide)
+
+Search across all of Reddit:
+
+```json
+{
+  "name": "search_reddit_all",
+  "arguments": {
+    "query": "artificial intelligence",
+    "limit": 20,
+    "sort": "top",
+    "time_filter": "week"
+  }
+}
+```
+
+**Parameters:**
+
+- `query` (required): Search query string
+- `limit` (optional): Number of posts to return (1-100, default: 10)
+- `sort` (optional): Sort method - "relevance", "hot", "top", "new", "comments" (default: "relevance")
+- `time_filter` (optional): Time filter - "all", "day", "week", "month", "year" (default: "all")
+
+#### 3. Get Post Details
 
 Get detailed information about a specific post:
 
@@ -109,7 +141,11 @@ Get detailed information about a specific post:
 }
 ```
 
-#### 3. Get Subreddit Information
+**Parameters:**
+
+- `post_id` (required): The Reddit post ID
+
+#### 4. Get Subreddit Information
 
 Get information about a subreddit:
 
@@ -122,7 +158,11 @@ Get information about a subreddit:
 }
 ```
 
-#### 4. Get Hot Posts
+**Parameters:**
+
+- `subreddit` (required): The subreddit name (without r/)
+
+#### 5. Get Hot Posts
 
 Get hot posts from a subreddit:
 
@@ -135,6 +175,20 @@ Get hot posts from a subreddit:
   }
 }
 ```
+
+**Parameters:**
+
+- `subreddit` (required): The subreddit name (without r/)
+- `limit` (optional): Number of posts to return (1-100, default: 10)
+
+### Search Tool Comparison
+
+| Feature      | `search_reddit_posts`     | `search_reddit_all`        |
+| ------------ | ------------------------- | -------------------------- |
+| **Scope**    | Single subreddit          | All Reddit                 |
+| **Use Case** | Focused community search  | Broad topic discovery      |
+| **Results**  | From one subreddit        | From multiple subreddits   |
+| **Example**  | "python" in r/programming | "python" across all Reddit |
 
 ## Configuration
 
@@ -150,15 +204,42 @@ Get hot posts from a subreddit:
 
 This server implements the Model Context Protocol and can be used with any MCP-compatible client. Configure your MCP client to connect to this server using stdio transport.
 
-Example MCP client configuration:
+### Claude Desktop Configuration
+
+Add this to your Claude Desktop configuration:
 
 ```json
 {
   "mcpServers": {
-    "reddit": {
+    "reddit-mcp-tool": {
+      "command": "uvx",
+      "args": ["reddit-mcp-tool@latest"],
+      "env": {
+        "REDDIT_CLIENT_ID": "your_client_id_here",
+        "REDDIT_CLIENT_SECRET": "your_client_secret_here",
+        "REDDIT_USER_AGENT": "reddit-mcp-tool:v0.1.7 (by /u/yourusername)"
+      }
+    }
+  }
+}
+```
+
+### Local Development Configuration
+
+For local development, use:
+
+```json
+{
+  "mcpServers": {
+    "reddit-mcp-tool": {
       "command": "uv",
       "args": ["run", "reddit-mcp-tool"],
-      "cwd": "/path/to/reddit-mcp-tool"
+      "cwd": "/path/to/reddit-mcp-tool",
+      "env": {
+        "REDDIT_CLIENT_ID": "your_client_id_here",
+        "REDDIT_CLIENT_SECRET": "your_client_secret_here",
+        "REDDIT_USER_AGENT": "reddit-mcp-tool:v0.1.7 (by /u/yourusername)"
+      }
     }
   }
 }

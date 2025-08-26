@@ -314,7 +314,7 @@ async def main():
             write_stream,
             InitializationOptions(
                 server_name="reddit-mcp-tool",
-                server_version="0.1.4",
+                server_version="0.1.7",
                 capabilities=server.get_capabilities(
                     notification_options=NotificationOptions(),
                     experimental_capabilities={},
