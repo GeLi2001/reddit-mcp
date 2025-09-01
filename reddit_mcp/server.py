@@ -28,6 +28,8 @@ def initialize_reddit_client():
         logger.info("Reddit client initialized successfully in read-only mode")
     except Exception as e:
         logger.error(f"Failed to initialize Reddit client: {str(e)}")
+        logger.error("Please ensure you have created a .env file with your Reddit API credentials.")
+        logger.error("Copy env.example to .env and fill in your Reddit API details.")
         reddit_client = None
 
 
@@ -53,7 +55,20 @@ async def search_reddit_posts(
         Human readable string containing search results
     """
     if reddit_client is None:
-        return "Error: Reddit client not initialized. Please check your configuration and ensure REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, and REDDIT_USER_AGENT are set."
+        return """Error: Reddit client not initialized. 
+
+To fix this:
+1. Copy env.example to .env: cp env.example .env
+2. Edit .env with your Reddit API credentials:
+   - Get credentials from https://old.reddit.com/prefs/apps/
+   - Create a 'script' type app
+   - Fill in REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, and REDDIT_USER_AGENT
+3. Restart the MCP server
+
+Example .env content:
+REDDIT_CLIENT_ID=your_14_char_client_id
+REDDIT_CLIENT_SECRET=your_27_char_client_secret  
+REDDIT_USER_AGENT=reddit-mcp-tool:v0.2.0 (by /u/yourusername)"""
     
     try:
         posts = await reddit_client.search_posts(
@@ -112,7 +127,20 @@ async def search_reddit_all(
         Human readable string containing search results from across Reddit
     """
     if reddit_client is None:
-        return "Error: Reddit client not initialized. Please check your configuration and ensure REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, and REDDIT_USER_AGENT are set."
+        return """Error: Reddit client not initialized. 
+
+To fix this:
+1. Copy env.example to .env: cp env.example .env
+2. Edit .env with your Reddit API credentials:
+   - Get credentials from https://old.reddit.com/prefs/apps/
+   - Create a 'script' type app
+   - Fill in REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, and REDDIT_USER_AGENT
+3. Restart the MCP server
+
+Example .env content:
+REDDIT_CLIENT_ID=your_14_char_client_id
+REDDIT_CLIENT_SECRET=your_27_char_client_secret  
+REDDIT_USER_AGENT=reddit-mcp-tool:v0.2.0 (by /u/yourusername)"""
     
     try:
         posts = await reddit_client.search_all_reddit(
@@ -162,7 +190,20 @@ async def get_reddit_post_details(post_id: str) -> str:
         Human readable string containing detailed post information
     """
     if reddit_client is None:
-        return "Error: Reddit client not initialized. Please check your configuration and ensure REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, and REDDIT_USER_AGENT are set."
+        return """Error: Reddit client not initialized. 
+
+To fix this:
+1. Copy env.example to .env: cp env.example .env
+2. Edit .env with your Reddit API credentials:
+   - Get credentials from https://old.reddit.com/prefs/apps/
+   - Create a 'script' type app
+   - Fill in REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, and REDDIT_USER_AGENT
+3. Restart the MCP server
+
+Example .env content:
+REDDIT_CLIENT_ID=your_14_char_client_id
+REDDIT_CLIENT_SECRET=your_27_char_client_secret  
+REDDIT_USER_AGENT=reddit-mcp-tool:v0.2.0 (by /u/yourusername)"""
     
     try:
         post_details = await reddit_client.get_post_details(post_id)
@@ -204,7 +245,20 @@ async def get_subreddit_info(subreddit: str) -> str:
         Human readable string containing subreddit information
     """
     if reddit_client is None:
-        return "Error: Reddit client not initialized. Please check your configuration and ensure REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, and REDDIT_USER_AGENT are set."
+        return """Error: Reddit client not initialized. 
+
+To fix this:
+1. Copy env.example to .env: cp env.example .env
+2. Edit .env with your Reddit API credentials:
+   - Get credentials from https://old.reddit.com/prefs/apps/
+   - Create a 'script' type app
+   - Fill in REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, and REDDIT_USER_AGENT
+3. Restart the MCP server
+
+Example .env content:
+REDDIT_CLIENT_ID=your_14_char_client_id
+REDDIT_CLIENT_SECRET=your_27_char_client_secret  
+REDDIT_USER_AGENT=reddit-mcp-tool:v0.2.0 (by /u/yourusername)"""
     
     try:
         subreddit_info = await reddit_client.get_subreddit_info(subreddit)
@@ -242,7 +296,20 @@ async def get_hot_reddit_posts(subreddit: str, limit: int = 10) -> str:
         Human readable string containing hot posts
     """
     if reddit_client is None:
-        return "Error: Reddit client not initialized. Please check your configuration and ensure REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, and REDDIT_USER_AGENT are set."
+        return """Error: Reddit client not initialized. 
+
+To fix this:
+1. Copy env.example to .env: cp env.example .env
+2. Edit .env with your Reddit API credentials:
+   - Get credentials from https://old.reddit.com/prefs/apps/
+   - Create a 'script' type app
+   - Fill in REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, and REDDIT_USER_AGENT
+3. Restart the MCP server
+
+Example .env content:
+REDDIT_CLIENT_ID=your_14_char_client_id
+REDDIT_CLIENT_SECRET=your_27_char_client_secret  
+REDDIT_USER_AGENT=reddit-mcp-tool:v0.2.0 (by /u/yourusername)"""
     
     try:
         posts = await reddit_client.get_hot_posts(subreddit, min(limit, 100))

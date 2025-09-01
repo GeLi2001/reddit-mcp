@@ -49,7 +49,15 @@ A Model Context Protocol (MCP) server that provides read-only tools for browsing
    uv sync
    ```
 
-3. **Set up environment variables**:
+3. **Quick setup (recommended)**:
+
+   ```bash
+   uv run python scripts/setup.py
+   ```
+
+   This will create your `.env` file and show you what to do next.
+
+4. **Manual setup**:
 
    ```bash
    cp env.example .env
@@ -63,7 +71,17 @@ A Model Context Protocol (MCP) server that provides read-only tools for browsing
    REDDIT_USER_AGENT=reddit-mcp-tool:v0.2.0 (by /u/yourusername)
    ```
 
+5. **Test your setup**:
+
+   ```bash
+   uv run python scripts/test_basic.py
+   ```
+
    **Note**: This server operates in read-only mode and only requires the client ID, secret, and user agent for basic API access.
+
+## Troubleshooting
+
+If you encounter issues, see [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for detailed solutions to common problems.
 
 ## Usage
 
